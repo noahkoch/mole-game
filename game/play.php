@@ -45,6 +45,12 @@
     }
 
     $user      = current_user()->user_id;
+
+    if(!$user) {
+      header('Location: /');
+      return;
+    }
+
     $is_owner  = $user == $game->owner;
     if(!$is_owner) {
       $player    = new Player(current_user()->user_id, $game_code);
@@ -75,6 +81,20 @@
       header("Location: /game/play.php?code={$game_code}");
       return;
     }
+
+    if(isset($_POST['toggle_reveal_to_captain']) && $is_owner) {
+      $player    = new Player($_POST['user_id'], $game_code);
+      $player->toggle_reveal_to_captain();
+      header("Location: /game/play.php?code={$game_code}");
+      return;
+    }
+
+    if(isset($_POST['name_override']) && $is_owner) {
+      $user = new User(array('user_id' => $_POST['user_id'], 'username' => $_POST['name_override']));
+      $user->override_name($_POST['name_override']);
+      header("Location: /game/play.php?code={$game_code}");
+      return;
+    }
   ?>
 
   <h1>Mole</h1>
@@ -95,7 +115,13 @@
       <?php endif; ?>
       <ul>
         <?php while($row = $players_query->fetch_assoc()): ?>
-          <li><?= $row['username']; ?></li>
+          <li>
+            <?php if($row['name_override']): ?>
+              <?= $row['username'] . " (" . $row['name_override'] . ")"; ?>
+            <?php else: ?>
+              <?= $row['username']; ?>
+            <?php endif; ?>
+          </li>
         <?php endwhile; ?>
       </ul>
     <?php else: ?>
@@ -124,6 +150,7 @@
         <th>5 -- FINISH!</th>
         <?php if($is_owner): ?>
           <th> Character </th>  
+          <th> Revealed to Captain </th>  
           <th> - </th>  
           <th> &nbsp; </th>  
           <th> + </th>  
@@ -135,7 +162,9 @@
     <tbody>
       <?php # ZOINKS! This is not a safe query! ?>
       <?php $query = Player::all_for_game($game_code); ?>
+      <?php $id = 0; ?>
       <?php while($row = $query->fetch_assoc()): ?>
+        <?php $id++; ?>
         <?php
           $class = "";
           if($row['died'] == 1) {
@@ -145,7 +174,20 @@
           }
         ?>
         <tr class="<?= $class; ?>"> 
-          <td class="<?= $class; ?>"><?= $row['username']; ?></td>
+          <td class="<?= $class; ?>">
+            [<?= $id; ?>]&nbsp; 
+            <?php if($row['name_override']): ?>
+              <?= $row['username'] . " (" . $row['name_override'] . ")"; ?>
+            <?php else: ?>
+              <?= $row['username']; ?>
+            <?php endif; ?>
+            <?php if($is_owner): ?>
+              <form method="POST">
+                <input type="hidden" name="user_id" value="<?= $row['user_id']; ?>">
+                <input type="text" name="name_override" value="<?= $row['name_override']; ?>">
+              </form>
+            <?php endif; ?>
+          </td>
           <td class="<?= $row['position'] >= 0 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 1 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 2 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
@@ -153,6 +195,16 @@
           <td class="<?= $row['position'] >= 4 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <?php if($is_owner): ?>
             <td><?= $row['character_type']; ?></td>  
+            <td>
+              <form method="POST">
+                <input type="hidden" name="user_id" value="<?= $row['user_id']; ?>">
+                <?php if(!$row['revealed_to_captain']): ?>
+                  <input type="submit" name="toggle_reveal_to_captain" value="Reveal">
+                <?php else: ?>
+                  <input type="submit" name="toggle_reveal_to_captain" value="Hide">
+                <?php endif; ?>
+              </form>
+            </td>  
             <td> 
               <form method="POST">
                 <input type="hidden" name="user_id" value="<?= $row['user_id']; ?>">
@@ -168,7 +220,7 @@
             </td>  
           <?php else: ?>
             <td>
-              <?php if($row['died']): ?>
+              <?php if($row['died'] || ($row['revealed_to_captain'] && $player->is_captain())): ?>
                 <?= $row['character_type']; ?>
               <?php endif; ?>
             </td>  

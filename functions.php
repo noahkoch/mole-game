@@ -3,6 +3,11 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+ini_set('session.gc_maxlifetime', 259200);
+
+// each client should remember their session id for EXACTLY 72 hours
+session_set_cookie_params(259200);
+
 session_start();
 
 require 'database/setup.php';
@@ -24,6 +29,10 @@ class User {
 
   public function exists() {
     return $this->user_id !== null;
+  }
+
+  public function override_name($override) {
+    DB::query("UPDATE users SET name_override = '{$override}' WHERE user_id = '{$this->user_id}';");
   }
 
   public function save() {
@@ -178,12 +187,20 @@ class Player {
       $this->finished = $row['finished'];
       $this->died = $row['died'];
       $this->position = $row['position'];
-      $this->team = Player::TEAMS[$row['position']];
+      //$this->team = Player::TEAMS[$row['team']];
     }
   }
 
   public function exists() {
     return !!$this->user_id;
+  }
+
+  public function is_captain() {
+    return $this->character_type == 'captain';
+  }
+
+  public function toggle_reveal_to_captain() {
+      DB::query("UPDATE players SET revealed_to_captain = !revealed_to_captain WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
   }
 
   public function move_forward() {
@@ -193,7 +210,7 @@ class Player {
     if($this->position >= Player::WIN_AT) {
       DB::query("UPDATE players SET position = position + 1, finished = true WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
     } else {
-      DB::query("UPDATE players SET position = position + 1 WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
+      DB::query("UPDATE players SET position = position + 1, died = false WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
     }
   }
 
@@ -204,12 +221,12 @@ class Player {
     if($this->position < 0) {
       DB::query("UPDATE players SET position = position - 1, died = true WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
     } else {
-      DB::query("UPDATE players SET position = position - 1 WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
+      DB::query("UPDATE players SET position = position - 1, finished = false WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
     }
   }
 
   public static function all_for_game($game_code) {
-    return DB::query("SELECT * FROM players INNER JOIN users ON players.user_id = users.user_id WHERE game_code = '{$game_code}'");
+    return DB::query("SELECT * FROM players INNER JOIN users ON players.user_id = users.user_id WHERE game_code = '{$game_code}' ORDER BY users.user_id");
   }
 
   public static function join_game($user_id, $game_code) {
