@@ -125,6 +125,9 @@ class Player {
   public $position;
   public $team;
   public $user_id;
+  public $game_code;
+
+  const WIN_AT = 4; # Zero-based indexing, this is the fifth "step".
 
   const TEAMS = array('runners', 'moles');
 
@@ -170,6 +173,7 @@ class Player {
     if($query->num_rows == 1) {
       $row = $query->fetch_assoc();
       $this->user_id = $row['user_id'];
+      $this->game_code = $row['game_code'];
       $this->character_type = $row['character_type'];
       $this->finished = $row['finished'];
       $this->died = $row['died'];
@@ -180,6 +184,28 @@ class Player {
 
   public function exists() {
     return !!$this->user_id;
+  }
+
+  public function move_forward() {
+    if($this->position >= Player::WIN_AT) { return; }
+
+    $this->position = $this->position + 1;
+    if($this->position >= Player::WIN_AT) {
+      DB::query("UPDATE players SET position = position + 1, finished = true WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
+    } else {
+      DB::query("UPDATE players SET position = position + 1 WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
+    }
+  }
+
+  public function move_back() {
+    if($this->position < 0) { return; }
+
+    $this->position = $this->position - 1;
+    if($this->position < 0) {
+      DB::query("UPDATE players SET position = position - 1, died = true WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
+    } else {
+      DB::query("UPDATE players SET position = position - 1 WHERE user_id = '{$this->user_id}' AND game_code = '{$this->game_code}'");
+    }
   }
 
   public static function all_for_game($game_code) {

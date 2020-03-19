@@ -16,6 +16,14 @@
     td.not-reached, tr:nth-child(2n) td.not-reached {
       background: orange;
     }
+
+    td.dq {
+      color: red; 
+    }
+
+    td.finished {
+      color: green; 
+    }
   </style>
 </head>
 
@@ -46,6 +54,20 @@
 
     if(isset($_POST['start_game']) && $is_owner) {
       $game->start();
+      header("Location: /game/play.php?code={$game_code}");
+      return;
+    }
+
+    if(isset($_POST['move_back']) && $is_owner) {
+      $player    = new Player($_POST['user_id'], $game_code);
+      $player->move_back();
+      header("Location: /game/play.php?code={$game_code}");
+      return;
+    }
+
+    if(isset($_POST['move_forward']) && $is_owner) {
+      $player    = new Player($_POST['user_id'], $game_code);
+      $player->move_forward();
       header("Location: /game/play.php?code={$game_code}");
       return;
     }
@@ -108,18 +130,36 @@
       <?php # ZOINKS! This is not a safe query! ?>
       <?php $query = Player::all_for_game($game_code); ?>
       <?php while($row = $query->fetch_assoc()): ?>
+        <?php
+          $class = "";
+          if($row['died'] == 1) {
+            $class = "dq";
+          } else if($row['finished']) {
+            $class = "finished";
+          }
+        ?>
         <tr> 
-          <td><?= $row['username']; ?></td>
+          <td class="<?= $class; ?>"><?= $row['username']; ?></td>
           <td class="<?= $row['position'] >= 0 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 1 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 2 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 3 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 4 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <?php if($is_owner): ?>
-            <th><?= $row['character_type']; ?></th>  
-            <th> - </th>  
-            <th> &nbsp; </th>  
-            <th> + </th>  
+            <td><?= $row['character_type']; ?></td>  
+            <td> 
+              <form method="POST">
+                <input type="hidden" name="user_id" value="<?= $row['user_id']; ?>">
+                <input type="submit" name="move_back" value="<<<--">
+              </form>
+            </td>  
+            <td> &nbsp; </td>  
+            <td>
+              <form method="POST">
+                <input type="hidden" name="user_id" value="<?= $row['user_id']; ?>">
+                <input type="submit" name="move_forward" value="-->>>">
+              </form>
+            </td>  
           <?php endif; ?>
         </tr>
       <?php endwhile; ?>
