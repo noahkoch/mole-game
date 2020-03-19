@@ -17,6 +17,10 @@
       background: orange;
     }
 
+    tr.dq td.not-reached, tr.dq:nth-child(2n) td.not-reached {
+      background: red;
+    }
+
     td.dq {
       color: red; 
     }
@@ -123,6 +127,8 @@
           <th> - </th>  
           <th> &nbsp; </th>  
           <th> + </th>  
+        <?php else: ?>
+          <th> &nbsp; </th>  
         <?php endif; ?>
       </tr>
     </thead>
@@ -138,7 +144,7 @@
             $class = "finished";
           }
         ?>
-        <tr> 
+        <tr class="<?= $class; ?>"> 
           <td class="<?= $class; ?>"><?= $row['username']; ?></td>
           <td class="<?= $row['position'] >= 0 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
           <td class="<?= $row['position'] >= 1 ? 'reached' : 'not-reached'; ?>">&nbsp;</td>
@@ -159,6 +165,12 @@
                 <input type="hidden" name="user_id" value="<?= $row['user_id']; ?>">
                 <input type="submit" name="move_forward" value="-->>>">
               </form>
+            </td>  
+          <?php else: ?>
+            <td>
+              <?php if($row['died']): ?>
+                <?= $row['character_type']; ?>
+              <?php endif; ?>
             </td>  
           <?php endif; ?>
         </tr>
@@ -184,15 +196,17 @@
   </p>
 
   <p>
-    During the huddle, everyone will open their eyes. Based on the movements, they will try to determin who the moles are and vote to move one person back one step. If a vote ends in a tie, no one moves back.
+    During the huddle, everyone will open their eyes. Based on the movements, they will try to determine who the moles are and vote to move one person back one or forward one step. If a vote ends in a tie, no one moves back.
+  </p>
+
+  <p>Disqualified players are not allowed to vote, but players who have finished the race can still vote.</p>
+
+  <p>
+    The game ends when either one team has all participants move to the finish line or one team has all participants disqualified. Tie breakers are decided by the team with the fewest disqualifications. If it is still tied, the moles win. 
   </p>
 
   <p>
-    The game ends when either one team has all participants move to the finish line or one team has all participants disqualified. 
-  </p>
-
-  <p>
-    Characters are revealed when a player is disqualified or finishes the race.
+    Characters are revealed when a player is disqualified.
   </p>
 
 </body>
