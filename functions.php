@@ -33,30 +33,39 @@ class Game {
   public $has_started;
 
   public function __construct($code) {
-    $query = DB::query("SELECT * FROM games WHERE game_code = {$code};")
-    $row = $query->fetch_result();
+    $query = DB::query("SELECT * FROM games WHERE game_code = '{$code}';");
+    if($query->num_rows > 0) {
+      $row = $query->fetch_assoc();
 
-    if($row) {
       $this->code = $code;
       $this->has_started = $row['has_started'];
       $this->owner = $row['owner'];
     }
   }
 
-  public static function create_new_game() {
+  public static function create_new_game($user_id) {
+    $code = Game::generate_unique_game_code();
+
+    if(DB::query("INSERT INTO games (owner, game_code) VALUES ('{$user_id}', '{$code}');")){
+      return new Game($code);
+    } else {
+      return new Game(null);
+    }
   }
 
   public static function generate_unique_game_code() {
-    $length = 5;
+    $length = 6;
     $game_code = null;
 
-    while($game_code !== null) {
+    while($game_code == null) {
       $game_code = substr(str_shuffle("ABCDEFGHJKMNPQRSTUVWXYZ"), 0, $length);
 
-      if(DB::query("SELECT * FROM games WHERE code = {$game_code}"))->num_rows == 1) {
+      if(DB::query("SELECT * FROM games WHERE game_code = '{$game_code}'")->num_rows == 1) {
         $game_code = null;
       }
     }
+
+    return $game_code;
   }
 
   public function assign_players() {
@@ -66,12 +75,12 @@ class Game {
 
     $assigned_players = array();
 
-    while($row = $query->fetch_row) {
+    while($row = $query->fetch_assoc()) {
       $player_assigned_to_character = false;
 
       while(!$player_assigned_to_character) {
         $character = array_rand(array_keys(Player::CHARACTERS));
-        $character_settings = Player::CHARACTERS[$character]
+        $character_settings = Player::CHARACTERS[$character];
 
         if($character_settings['required_participants'] >= $number_of_players && (!isset($assigned_players[$character]) || $character_settings['max'] > count($assigned_players[$character]))) {
           if($charachter == 'mole' && (!isset($assigned_players[$character]) || $number_of_moles > count($assigned_players['mole']))) {
@@ -102,6 +111,7 @@ class Player {
   public $finished;
   public $position;
   public $team;
+  public $user_id;
 
   const TEAMS = array('runners', 'moles');
 
@@ -140,17 +150,33 @@ class Player {
       'max' => 1,
       'team' => 0 
     )
+  );
 
-    public function __construct($user_id, $game_code) {
-      $query = DB::query("SELECT * FROM players WHERE user_id = {$user_id} AND game_code = {$user_id};")
-      $row = $query->fetch_result();
+  public function __construct($user_id, $game_code) {
+    $query = DB::query("SELECT * FROM players WHERE user_id = '{$user_id}' AND game_code = '{$game_code}';");
+    if($query->num_rows == 1) {
+      $row = $query->fetch_assoc();
+      $this->user_id = $row['user_id'];
       $this->character_type = $row['character_type'];
       $this->finished = $row['finished'];
       $this->died = $row['died'];
       $this->position = $row['position'];
-      $this->team = TEAMS[$row['position']];
+      $this->team = Player::TEAMS[$row['position']];
     }
-  );
+  }
+
+  public function exists() {
+    return !!$this->user_id;
+  }
+
+  public static function all_for_game($game_code) {
+    return DB::query("SELECT players.* FROM players WHERE game_code = '{$game_code}'");
+  }
+
+  public static function join_game($user_id, $game_code) {
+    DB::query("INSERT INTO players (user_id, game_code) VALUES ('{$user_id}', '{$game_code}')");
+    return new Player($user_id, $game_code);
+  }
 
   public static function how_many_moles($number_of_players) {
     if($number_of_players < 9) {

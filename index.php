@@ -19,14 +19,14 @@
     <br><br>
 
     <b>Join a Game</b>
-    <form method="GET" action="games/play.php">
+    <form method="GET" action="game/play.php">
       <input type="text" name="code"> 
       <br>
       <input type="submit" value="Start">
     </form>
 
     <b>Start a Game (You will be the ref)</b>
-    <form method="POST" action="games/start.php">
+    <form method="POST" action="game/start.php">
       <input type="submit" value="Start">
     </form>
   <?php else: ?>

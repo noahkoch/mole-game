@@ -9,7 +9,7 @@ create table games (
   owner varchar(255) NOT NULL,
   completed boolean DEFAULT FALSE,
   has_started boolean DEFAULT FALSE,
-  PRIMARY KEY(code)
+  PRIMARY KEY(game_code)
 ); 
 
 create table players (
