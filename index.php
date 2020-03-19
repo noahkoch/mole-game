@@ -10,6 +10,8 @@
       $_SESSION['username'] = $_POST['username'];
       $_SESSION['user_id'] = User::generate_user_id();
     }
+
+    current_user()->save();
   ?>
 
   <h1> Welcome to the Mole Game </h1>

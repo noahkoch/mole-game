@@ -25,6 +25,13 @@ class User {
   public function exists() {
     return $this->user_id !== null;
   }
+
+  public function save() {
+    $query = DB::query("SELECT * FROM users WHERE user_id = '{$this->user_id}';");
+    if($query->num_rows == 0) {
+      DB::query("INSERT INTO users (user_id, username) VALUES ('{$this->user_id}', '{$this->username}');");
+    }
+  }
 }
 
 class Game {
@@ -68,10 +75,15 @@ class Game {
     return $game_code;
   }
 
+  public function start() {
+    $this->assign_players();
+    DB::query("UPDATE games SET has_started = TRUE WHERE game_code = '{$this->code}'");
+  }
+
   public function assign_players() {
-    $query = DB::query("SELECT * FROM players WHERE game_code = {$this->game_code}");
+    $query = DB::query("SELECT * FROM players WHERE game_code = '{$this->code}'");
     $number_of_players = $query->num_rows;
-    $number_of_moles = $query->num_rows($query->num_rows);
+    $number_of_moles = Player::how_many_moles($query->num_rows);
 
     $assigned_players = array();
 
@@ -79,11 +91,12 @@ class Game {
       $player_assigned_to_character = false;
 
       while(!$player_assigned_to_character) {
-        $character = array_rand(array_keys(Player::CHARACTERS));
+        $character_offset = array_rand(array_keys(Player::CHARACTERS));
+        $character = array_keys(Player::CHARACTERS)[$character_offset];
         $character_settings = Player::CHARACTERS[$character];
 
         if($character_settings['required_participants'] >= $number_of_players && (!isset($assigned_players[$character]) || $character_settings['max'] > count($assigned_players[$character]))) {
-          if($charachter == 'mole' && (!isset($assigned_players[$character]) || $number_of_moles > count($assigned_players['mole']))) {
+          if($character == 'mole' && (!isset($assigned_players[$character]) || $number_of_moles > count($assigned_players['mole']))) {
             $player_assigned_to_character = true;
           } else if($character !== 'mole') {
             $player_assigned_to_character = true;
@@ -96,7 +109,7 @@ class Game {
 
             $assigned_players[$character][] = $row['user_id'];
 
-            DB::query("UPDATE players WHERE game_code = {$this->game_code} AND user_id = {$row['user_id']} SET character_type = {$character}");
+            DB::query("UPDATE players SET character_type = '{$character}' WHERE game_code = '{$this->code}' AND user_id = '{$row['user_id']}'");
           }
         }
       }
@@ -170,7 +183,7 @@ class Player {
   }
 
   public static function all_for_game($game_code) {
-    return DB::query("SELECT players.* FROM players WHERE game_code = '{$game_code}'");
+    return DB::query("SELECT * FROM players INNER JOIN users ON players.user_id = users.user_id WHERE game_code = '{$game_code}'");
   }
 
   public static function join_game($user_id, $game_code) {
