@@ -138,5 +138,21 @@
   <p>
     If a player reaches the finish line they cannot be disqualified and if a player is disqualified they are out of the game. 
   </p>
+  
+  <p>
+    Each "heat" or round will have a pre-huddle and a huddle. Regular "Runners" will keep their eyes closed for the entire pre-huddle. During the pre-huddle, the other participants will open their eyes when called upon. The moles choose 2 participants whome they would like to move back one step each. The coach gets to move one participant forward up to one step; they can also choose not to move anyone. The sore loser gets to move one person back one step; they can choose to not move anyone. The captain can know the character of one particpant.  
+  </p>
+
+  <p>
+    During the huddle, everyone will open their eyes. Based on the movements, they will try to determin who the moles are and vote to move one person back one step. If a vote ends in a tie, no one moves back.
+  </p>
+
+  <p>
+    The game ends when either one team has all participants move to the finish line or one team has all participants disqualified. 
+  </p>
+
+  <p>
+    Characters are revealed when a player is disqualified or finishes the race.
+  </p>
 
 </body>
