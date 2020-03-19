@@ -15,7 +15,7 @@
     current_user()->save();
   ?>
 
-  <h1> Welcome to the Mole Game </h1>
+  <h1> Welcome to the Mole Game that may or may not work </h1>
 
   <?php if(current_user()->exists()): ?>
     <?= "Welcome ". current_user()->username . "!"; ?>
