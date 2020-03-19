@@ -118,7 +118,7 @@ class Game {
 
             $assigned_players[$character][] = $row['user_id'];
 
-            DB::query("UPDATE players SET character_type = '{$character}' WHERE game_code = '{$this->code}' AND user_id = '{$row['user_id']}'");
+            DB::query("UPDATE players SET position = 1, died = false, finished = false, revealed_to_captain = false, character_type = '{$character}' WHERE game_code = '{$this->code}' AND user_id = '{$row['user_id']}'");
           }
         }
       }
@@ -145,7 +145,8 @@ class Player {
       'before_huddle_powers' => true,
       'required_participants' => 6,
       'max' => 4,
-      'team' => 1
+      'team' => 1,
+      'description' => 'You are secretly on the other team. But shhhh don\'t let anyone on to that. You and you fellow moles will open their eyes before each huddle to pick two people to move back 1 step. You can also move yourselves back to throw everyone off.' ,
     ),
     'coach' => array(
       'description' => 'Before each huddle, you get to choose one participant to move one step ahead.' ,

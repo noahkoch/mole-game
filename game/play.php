@@ -68,6 +68,12 @@
       return;
     }
 
+    if(isset($_POST['reassign_players']) && $is_owner) {
+      $game->assign_players();
+      header("Location: /game/play.php?code={$game_code}");
+      return;
+    }
+
     if(isset($_POST['move_back']) && $is_owner) {
       $player    = new Player($_POST['user_id'], $game_code);
       $player->move_back();
@@ -135,8 +141,12 @@
 
   <?php if($is_owner): ?>
     <b> You're the ref </b>
+    <form method="POST">
+      <input type="submit" name="reassign_players" value="Re-assign players" >
+    </form>
   <?php else: ?>
     <b><?= "You are a " . $player->character_type; ?></b>
+    <p>Description <?= "You are a " . Player::CHARACTERS[$player->character_type]['description']; ?></p>
   <?php endif; ?>
 
   <table> 
