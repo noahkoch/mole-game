@@ -4,6 +4,7 @@
 
 <body>
   <?php
+    $permit_unauthenticated = true;
     require "functions.php";
 
     if (isset($_POST['username']) && !current_user()->exists()) {
@@ -32,9 +33,10 @@
       <input type="submit" value="Start">
     </form>
   <?php else: ?>
-    <b>Give yourself a name</b>
+    <h3>Please enter your REAL name</h3>
+    <b>DO NOT ENTER A GAME CODE HERE</b>
     <form method="POST">
-      <input type="text" name="username" placeholder="make it good.."> 
+      <input type="text" name="username" placeholder="Enter your real name"> 
       <br>
       <input type="submit" value="Start">
     </form>
