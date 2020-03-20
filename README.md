@@ -50,6 +50,8 @@ All participants who are still eligible to vote (non DQ'd participants) will try
 
 This all repeats until one entire team has been DQ'd or has finished.
 
+![Game board with a participant disqualified and one that has finished](.github_images/dq-and-finish.png?raw=true "Game board with a participant disqualified and one that has finished")
+
 ## Contributing
 
 Please feel free to open a PR to clean up the interface or improve the quality of the code.
