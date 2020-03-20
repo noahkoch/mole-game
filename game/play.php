@@ -146,7 +146,7 @@
     </form>
   <?php else: ?>
     <b><?= "You are a " . $player->character_type; ?></b>
-    <p>Description <?= "You are a " . Player::CHARACTERS[$player->character_type]['description']; ?></p>
+    <p>Description: <?= Player::CHARACTERS[$player->character_type]['description']; ?></p>
   <?php endif; ?>
 
   <table> 

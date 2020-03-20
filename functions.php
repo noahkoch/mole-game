@@ -104,7 +104,7 @@ class Game {
         $character = array_keys(Player::CHARACTERS)[$character_offset];
         $character_settings = Player::CHARACTERS[$character];
 
-        if($character_settings['required_participants'] >= $number_of_players && (!isset($assigned_players[$character]) || $character_settings['max'] > count($assigned_players[$character]))) {
+        if($character_settings['required_participants'] <= $number_of_players && (!isset($assigned_players[$character]) || $character_settings['max'] > count($assigned_players[$character]))) {
           if($character == 'mole' && (!isset($assigned_players[$character]) || $number_of_moles > count($assigned_players['mole']))) {
             $player_assigned_to_character = true;
           } else if($character !== 'mole') {
