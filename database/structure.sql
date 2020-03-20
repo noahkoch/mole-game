@@ -7,7 +7,7 @@ create table users (
 
 create table games (
   game_code varchar(55) NOT NULL,
-  owner varchar(255) NOT NULL,
+  owner varchar(255) NOT NULL CHECK (owner <> ''),
   completed boolean DEFAULT FALSE,
   has_started boolean DEFAULT FALSE,
   PRIMARY KEY(game_code)

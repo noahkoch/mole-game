@@ -1,0 +1,10 @@
+<phpunit bootstrap="vendor/autoload.php">
+  <testsuites>
+    <testsuite name="tests">
+      <directory>tests</directory>
+    </testsuite>
+  </testsuites>
+  <php>
+    <var name="db_env" value="test"/>
+  </php>
+</phpunit>

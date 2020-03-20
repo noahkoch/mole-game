@@ -1,4 +1,5 @@
-database/setup.php
+database/database_config.php
 *.sw*
 
 /vendor/
+

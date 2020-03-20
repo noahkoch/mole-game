@@ -4,6 +4,12 @@
     "require": {
         "phpunit/phpunit": "^9.0"
     },
+    "autoload": {
+        "classmap": [
+            "classes/",
+            "database/db.php"
+        ]
+    },
     "authors": [
         {
             "name": "Noah Kochanowicz",
