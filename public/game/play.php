@@ -33,7 +33,7 @@
 
 <body>
   <?php
-    require "../functions.php";
+    require "../../functions.php";
     $game_code = $_GET['code'];
 
     $game      = new Game($game_code);

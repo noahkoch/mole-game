@@ -5,7 +5,7 @@
 <body>
   <?php
     $permit_unauthenticated = true;
-    require "functions.php";
+    require "../functions.php";
 
     if (isset($_POST['username']) && !current_user()->exists()) {
       $_SESSION['username'] = $_POST['username'];
