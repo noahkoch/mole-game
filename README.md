@@ -30,6 +30,9 @@ Once a participant has been disqualified (DQ'd) they are out of the game and the
 Once a participant finishes, they are safe. They can't be moved back or forwards, they can still vote and their identity is remains a secret.
 
 ## Game Play
+![Starting Game Board](.github_images/starting-board.png?raw=true "Starting Game Board")
+
+
 Each round has two stages.
 
 #### Stage 1

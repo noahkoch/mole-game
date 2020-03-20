@@ -2,4 +2,5 @@ database/database_config.php
 *.sw*
 
 /vendor/
+.DS_Store
 
