@@ -1,0 +1,13 @@
+{
+    "name": "noahkochanowicz/mole-game",
+    "description": "An online whodunnit",
+    "require": {
+        "phpunit/phpunit": "^9.0"
+    },
+    "authors": [
+        {
+            "name": "Noah Kochanowicz",
+            "email": "me@noahkoch.com"
+        }
+    ]
+}

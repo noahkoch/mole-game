@@ -1,2 +1,4 @@
 database/setup.php
 *.sw*
+
+/vendor/
