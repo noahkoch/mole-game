@@ -13,6 +13,8 @@ class Player {
 
   const TEAMS = array('runners', 'moles');
 
+  const SPECIAL_RUNNERS = array('captain', 'sore loser', 'coach');
+
   const CHARACTERS = array(
     'mole' => array(
       'before_huddle_powers' => true,

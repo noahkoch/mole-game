@@ -47,39 +47,32 @@ class Game {
   }
 
   public function assign_players() {
-    $query = DB::query("SELECT * FROM players WHERE game_code = '{$this->code}'");
-    $number_of_players = $query->num_rows;
+    DB::query("UPDATE players SET character_type = null WHERE game_code = '{$this->code}'");
+
+    $query = DB::query("SELECT * FROM players WHERE game_code = '{$this->code}' ORDER BY rand()");
+
     $number_of_moles = Player::how_many_moles($query->num_rows);
 
-    $assigned_players = array();
+    $assigned_players = array('mole' => array(), 'runner' => array());
+
+    foreach (range(1, $number_of_moles) as $index) {
+      $row = $query->fetch_assoc();
+      $assigned_players['mole'][] = $row['user_id'];
+    }
+
+    foreach(Player::SPECIAL_RUNNERS as $special_runner) {
+      $row = $query->fetch_assoc();
+      $assigned_players[$special_runner] = array($row['user_id']);
+    }
 
     while($row = $query->fetch_assoc()) {
-      $player_assigned_to_character = false;
+      $assigned_players['runner'][] = $row['user_id'];
+    }
 
-      while(!$player_assigned_to_character) {
-        $character_offset = array_rand(array_keys(Player::CHARACTERS));
-        $character = array_keys(Player::CHARACTERS)[$character_offset];
-        $character_settings = Player::CHARACTERS[$character];
-
-        if($character_settings['required_participants'] <= $number_of_players && (!isset($assigned_players[$character]) || $character_settings['max'] > count($assigned_players[$character]))) {
-          if($character == 'mole' && (!isset($assigned_players[$character]) || $number_of_moles > count($assigned_players['mole']))) {
-            $player_assigned_to_character = true;
-          } else if($character !== 'mole') {
-            $player_assigned_to_character = true;
-          }
-
-          if($player_assigned_to_character) {
-            if(!isset($assigned_players[$character])) {
-              $assigned_players[$character] = array();
-            }
-
-            $assigned_players[$character][] = $row['user_id'];
-
-            DB::query("UPDATE players SET position = 1, died = false, finished = false, revealed_to_captain = false, character_type = '{$character}' WHERE game_code = '{$this->code}' AND user_id = '{$row['user_id']}'");
-          }
-        }
+    foreach($assigned_players as $character_type => $users) {
+      foreach($users as $user_id) {
+        DB::query("UPDATE players SET position = 1, died = false, finished = false, revealed_to_captain = false, character_type = '{$character_type}' WHERE game_code = '{$this->code}' AND user_id = '{$user_id}'");
       }
-
     }
   }
 }

@@ -13,9 +13,18 @@ final class GameTest extends TestCase {
     $this->assertNotNull(Game::generate_unique_game_code());
   }
 
+  public function testStart() : void {
+    $game = new Game('8PGame');
+    $this->assertEquals(0, $game->has_started);
+    $game->start();
+
+    $game = new Game('8PGame');
+    $this->assertEquals(true, $game->has_started);
+  }
+
   public function testAssignPlayers() : void {
     $game = new Game('8PGame');
-    $game->start();
+    $game->assign_players();
 
     $players = Player::all_for_game('8PGame');
 
@@ -29,6 +38,10 @@ final class GameTest extends TestCase {
       }
     }
 
-    $this->assertEquals($assignments['mole'], 2);
+    $this->assertEquals(2, $assignments['mole']);
+    $this->assertGreaterThanOrEqual(2, $assignments['runner']);
+    $this->assertEquals(1, $assignments['coach']);
+    $this->assertEquals(1, $assignments['captain']);
+    $this->assertEquals(1, $assignments['sore loser']);
   }
 }
