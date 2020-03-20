@@ -144,9 +144,11 @@
     <form method="POST">
       <input type="submit" name="reassign_players" value="Re-assign players" >
     </form>
-  <?php else: ?>
+  <?php elseif($player->exists()): ?>
     <b><?= "You are a " . $player->character_type; ?></b>
     <p>Description: <?= Player::CHARACTERS[$player->character_type]['description']; ?></p>
+  <?php else: ?>
+    <b>This game has already started, but you can follow along.</b>
   <?php endif; ?>
 
   <table> 
