@@ -10,7 +10,7 @@
   const TEAMS = array('runners', 'moles');
 
   #const SPECIAL_RUNNERS = array('captain', 'sore loser', 'coach');
-  const SPECIAL_RUNNERS = array('coach', 'sore_loser');
+  const SPECIAL_RUNNERS = array('coach');
 
   const CHARACTERS = array(
     'mole' => array(

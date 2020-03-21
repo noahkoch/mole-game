@@ -112,8 +112,8 @@
       <?php if($is_owner): ?>
         <b> (You're the ref) </b>
         <br>
-        <i>Once at least 6 players have joined, we can kick this thing off.</i>
-        <?php if($players_query->num_rows >= 6): ?>
+        <i>Once at least 5 players have joined, we can kick this thing off.</i>
+        <?php if($players_query->num_rows >= 5): ?>
           <form method="POST">
             <input type="submit" name="start_game" value="Start the Game">
           </form>
