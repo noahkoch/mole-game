@@ -1,8 +1,4 @@
-<?php
-
-class Player {
-  public $character_type;
-  public $died;
+<?php class Player { public $character_type; public $died;
   public $finished;
   public $position;
   public $team;
@@ -13,7 +9,8 @@ class Player {
 
   const TEAMS = array('runners', 'moles');
 
-  const SPECIAL_RUNNERS = array('captain', 'sore loser', 'coach');
+  #const SPECIAL_RUNNERS = array('captain', 'sore loser', 'coach');
+  const SPECIAL_RUNNERS = array('captain', 'coach');
 
   const CHARACTERS = array(
     'mole' => array(
@@ -111,9 +108,11 @@ class Player {
   }
 
   public static function how_many_moles($number_of_players) {
-    if($number_of_players < 9) {
+    if($number_of_players == 6) {
+      return 1;
+    } else if($number_of_players < 10) {
       return 2;
-    } else if($number_of_players < 12) {
+    } else if($number_of_players < 14) {
       return 3;
     } else {
       return 4;
