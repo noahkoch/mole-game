@@ -10,7 +10,7 @@
   const TEAMS = array('runners', 'moles');
 
   #const SPECIAL_RUNNERS = array('captain', 'sore loser', 'coach');
-  const SPECIAL_RUNNERS = array('captain', 'coach');
+  const SPECIAL_RUNNERS = array('coach', 'sore_loser');
 
   const CHARACTERS = array(
     'mole' => array(
@@ -108,11 +108,9 @@
   }
 
   public static function how_many_moles($number_of_players) {
-    if($number_of_players == 6) {
-      return 1;
-    } else if($number_of_players < 10) {
+    if($number_of_players < 6) {
       return 2;
-    } else if($number_of_players < 14) {
+    } else if($number_of_players < 9) {
       return 3;
     } else {
       return 4;
