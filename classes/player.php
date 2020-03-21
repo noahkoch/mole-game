@@ -108,9 +108,9 @@
   }
 
   public static function how_many_moles($number_of_players) {
-    if($number_of_players < 6) {
+    if($number_of_players < 9) {
       return 2;
-    } else if($number_of_players < 9) {
+    } else if($number_of_players < 12) {
       return 3;
     } else {
       return 4;
