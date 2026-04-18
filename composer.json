@@ -2,7 +2,7 @@
     "name": "noahkochanowicz/mole-game",
     "description": "An online whodunnit",
     "require": {
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^12.5"
     },
     "autoload": {
         "classmap": [
